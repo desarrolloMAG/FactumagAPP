@@ -132,6 +132,34 @@ import { WalletService } from '../core/services/wallet/WalletService';
           <span class="nav-label">Mi Perfil</span>
         </a>
 
+        <!-- Nómina -->
+        <div class="sidebar-section-title" style="padding-top:12px">Nómina</div>
+
+        <a class="nav-item"
+          routerLink="/empleados"
+          routerLinkActive="active"
+          (click)="close()">
+          <span class="material-icons-round nav-icon">badge</span>
+          <span class="nav-label">Empleados</span>
+        </a>
+
+        <a class="nav-item"
+          routerLink="/nomina/generar"
+          routerLinkActive="active"
+          (click)="close()"
+          style="margin-bottom:6px;border:1px dashed rgba(0,212,170,0.15)">
+          <span class="material-icons-round nav-icon" style="color:var(--accent)">payments</span>
+          <span class="nav-label" style="color:var(--accent)">Generar Nómina</span>
+        </a>
+
+        <a class="nav-item"
+          routerLink="/nomina/lotes"
+          routerLinkActive="active"
+          (click)="close()">
+          <span class="material-icons-round nav-icon">history</span>
+          <span class="nav-label">Historial de Lotes</span>
+        </a>
+
       </nav>
 
       <!-- Footer -->

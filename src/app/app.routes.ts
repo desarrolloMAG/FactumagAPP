@@ -34,6 +34,11 @@ export const routes: Routes = [
       { path: 'conceptos',     loadComponent: () => import('./features/conceptos/conceptos.component').then(m => m.ConceptosComponent) },
       { path: 'conceptos/new', loadComponent: () => import('./features/conceptos/concepto.form.component').then(m => m.ConceptoFormComponent) },
       { path: 'conceptos/:id', loadComponent: () => import('./features/conceptos/concepto.form.component').then(m => m.ConceptoFormComponent) },
+      { path: 'empleados',            loadComponent: () => import('./features/empleados/empleados.lista.component').then(m => m.EmpleadosListaComponent) },
+      { path: 'empleados/new',        loadComponent: () => import('./features/empleados/empleado.form.component').then(m => m.EmpleadoFormComponent) },
+      { path: 'empleados/:id/editar', loadComponent: () => import('./features/empleados/empleado.form.component').then(m => m.EmpleadoFormComponent) },
+      { path: 'nomina/generar',       loadComponent: () => import('./features/nomina-generar/nomina.generar.component').then(m => m.NominaGenerarComponent) },
+      { path: 'nomina/lotes',         loadComponent: () => import('./features/nomina-generar/nomina.lotes.component').then(m => m.NominaLotesComponent) },
     ]
   },
   { path: '**', redirectTo: '' }
