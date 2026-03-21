@@ -32,7 +32,7 @@ export class AuthService {
   logout(): void {
     localStorage.clear();
     this._user$.next(null);
-    this.router.navigate(['/auth/login']);
+    window.location.href = `${environment.ssoUrl}/logout`
   }
 
   getToken(): string | null { return localStorage.getItem('accessToken'); }

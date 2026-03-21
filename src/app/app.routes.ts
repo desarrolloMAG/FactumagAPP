@@ -39,6 +39,12 @@ export const routes: Routes = [
       { path: 'empleados/:id/editar', loadComponent: () => import('./features/empleados/empleado.form.component').then(m => m.EmpleadoFormComponent) },
       { path: 'nomina/generar',       loadComponent: () => import('./features/nomina-generar/nomina.generar.component').then(m => m.NominaGenerarComponent) },
       { path: 'nomina/lotes',         loadComponent: () => import('./features/nomina-generar/nomina.lotes.component').then(m => m.NominaLotesComponent) },
+      {
+        path: 'sso/clear',
+        loadComponent: () =>
+          import('./core/components/sso-clear/sso-clear.component')
+            .then(m => m.SsoClearComponent)
+      }
     ]
   },
   { path: '**', redirectTo: '' }

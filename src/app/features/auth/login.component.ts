@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/Auth/AuthService';
 
 @Component({
@@ -136,16 +136,51 @@ import { AuthService } from '../../core/services/Auth/AuthService';
     </style>
   `
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   form:         FormGroup;
   loading       = false;
   showPassword  = false;
   errorMsg      = '';
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+  constructor(
+    private fb:    FormBuilder,
+    private auth:  AuthService,
+    private router: Router,
+    private route:  ActivatedRoute   // ← AGREGAR
+  ) {
     this.form = this.fb.group({
       email:    ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      // ── Caso 1: token directo en URL ──────────────────────────
+      let token = params['token'];
+
+      // ── Caso 2: token dentro del returnUrl ────────────────────
+      if (!token && params['returnUrl']) {
+        const returnUrl = decodeURIComponent(params['returnUrl']);
+        const tokenMatch = returnUrl.match(/[?&]token=([^&]+)/);
+        if (tokenMatch) token = tokenMatch[1];
+      }
+
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const user = {
+            id:       payload.sub,
+            name:     payload.name,
+            email:    payload.email,
+            tenantId: payload.tenant_id ?? null,
+          };
+          localStorage.setItem('user', JSON.stringify(user));
+        } catch { }
+
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      }
     });
   }
 
@@ -157,15 +192,13 @@ export class LoginComponent {
   submit(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
-
     this.loading  = true;
     this.errorMsg = '';
-
     this.auth.login(this.form.value).subscribe({
       next:  () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading  = false;
-        this.errorMsg = err.error?.message ?? 'Credenciales incorrectas. Intenta de nuevo.';
+        this.errorMsg = err.error?.message ?? 'Credenciales incorrectas.';
       }
     });
   }
