@@ -9,12 +9,15 @@ import { AuthService } from '../../core/services/Auth/AuthService';
 import { CfdiService } from '../../core/services/CFDI/CfdiService';
 import { WalletService } from '../../core/services/wallet/WalletService';
 import { RfcService } from '../../core/services/RFC/RfcService';
+import { WizardOnboardingComponent } from '../onboarding/wizard.onboarding.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, WizardOnboardingComponent],
   template: `
+    <app-wizard-onboarding *ngIf="showWizard" (closed)="onWizardClosed()"></app-wizard-onboarding>
+
     <div class="animate-in">
 
       <!-- Bienvenida -->
@@ -250,6 +253,7 @@ export class DashboardComponent implements OnInit {
   wallets: Wallet[] = [];
   rfcs: RfcList[] = [];
   loadingCfdis = true;
+  showWizard = false;
 
   stats = { cfdisMes: 0, timbrados: 0, timbres: 0, rfcs: 0 };
 
@@ -273,16 +277,22 @@ export class DashboardComponent implements OnInit {
     this.loadData();
   }
 
+  onWizardClosed(): void {
+    this.showWizard = false;
+    this.loadData();
+  }
+
   loadData(): void {
     const now   = new Date();
     const desde = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
     const hasta = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
     this.cfdiSvc.listar({ pageSize: 8, desde, hasta }).subscribe(r => {
-      this.cfdis          = r.data;
-      this.stats.cfdisMes = r.total;
+      this.cfdis           = r.data;
+      this.stats.cfdisMes  = r.total;
       this.stats.timbrados = r.data.filter(c => c.estado === 'Timbrado').length;
-      this.loadingCfdis   = false;
+      this.loadingCfdis    = false;
+      this.checkOnboarding(r.total);
     });
 
     this.walletSvc.saldos().subscribe((ws: any) => {
@@ -294,5 +304,12 @@ export class DashboardComponent implements OnInit {
       this.rfcs       = rs;
       this.stats.rfcs = rs.length;
     });
+  }
+
+  private checkOnboarding(totalCfdis: number): void {
+    if (localStorage.getItem('onboarding_done')) return;
+    if (totalCfdis === 0 && this.rfcs.length === 0) {
+      this.showWizard = true;
+    }
   }
 }

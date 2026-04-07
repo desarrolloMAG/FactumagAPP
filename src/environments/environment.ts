@@ -6,8 +6,7 @@ export const environment = {
   ssoUrl:     'http://localhost:4200'
 };
 
-/*
-export const environment = {
+/*export const environment = {
   production: true,
   authUrl:         'https://apisuites.betakorebix.com/',
   facturacionUrl:  'https://apifacturacion.betakorebix.com',
