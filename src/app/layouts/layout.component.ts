@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { SidebarComponent } from '../shared/sidebar.component';
+import { AppsDropdownComponent } from '../shared/apps-dropdown.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, RouterModule, SidebarComponent, AppsDropdownComponent],
   template: `
     <div class="app-container">
       <!-- Sidebar -->
@@ -39,6 +40,7 @@ import { SidebarComponent } from '../shared/sidebar.component';
           </div>
 
           <div class="topbar-right">
+            <app-apps-dropdown></app-apps-dropdown>
             <button class="topbar-btn">
               <span class="material-icons-round" style="font-size:20px">notifications_none</span>
               <span class="badge-dot"></span>
