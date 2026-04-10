@@ -11,7 +11,7 @@ concurrency:
 
 env:
   DEPLOY_PATH: 'C:\inetpub\facturacion.betakorebix.com'
-  BACKUP_PATH: 'C:\deploys\backups\facturacion.betakorebix.com'
+  BACKUP_PATH: 'C:\deploys\backups\facturacion.betakorebix.com' 
   # Ajusta este nombre al de tu proyecto Angular real (revisa angular.json → "projects")
   ANGULAR_PROJECT_NAME: 'facturacion'
 
