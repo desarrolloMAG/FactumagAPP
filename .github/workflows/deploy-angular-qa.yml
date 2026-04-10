@@ -11,7 +11,7 @@ concurrency:
 
 env:
   DEPLOY_PATH: 'C:\inetpub\facturacion.betakorebix.com'
-  BACKUP_PATH: 'C:\deploys\backups\facturacion.betakorebix.com'  
+  BACKUP_PATH: 'C:\deploys\backups\facturacion.betakorebix.com'
   # Ajusta este nombre al de tu proyecto Angular real (revisa angular.json → "projects")
   ANGULAR_PROJECT_NAME: 'facturacion'
 
@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
