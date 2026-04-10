@@ -1,28 +1,113 @@
-name: Deploy Facturacion QA
+name: Deploy facturacion.betakorebix.com (Angular)
 
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-facturacion.betakorebix-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_PATH: 'C:\inetpub\facturacion.betakorebix.com'
+  BACKUP_PATH: 'C:\deploys\backups\facturacion.betakorebix.com'
+  # Ajusta este nombre al de tu proyecto Angular real (revisa angular.json → "projects")
+  ANGULAR_PROJECT_NAME: 'facturacion'
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, iis-betakorebix-qa]
+    runs-on: [self-hosted, windows, angular, production]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Use Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm ci
+        shell: powershell
 
-    - name: Build Angular
-      run: npm run build -- --configuration production --base-href /facturacion/
+      - name: Build Angular (production)
+        run: npm run build -- --configuration production
+        shell: powershell
 
-    - name: Deploy to IIS
-      run: |
-        xcopy /y /s dist\main-trion\browser C:\inetpub\betakorebix.com\facturacion\
+      - name: Detectar carpeta de salida del build
+        id: detect
+        run: |
+          # Angular 17+ usa dist/PROYECTO/browser, versiones anteriores solo dist/PROYECTO
+          $browserPath = "dist\${{ env.ANGULAR_PROJECT_NAME }}\browser"
+          $legacyPath  = "dist\${{ env.ANGULAR_PROJECT_NAME }}"
+
+          if (Test-Path $browserPath) {
+            $output = $browserPath
+          } elseif (Test-Path $legacyPath) {
+            $output = $legacyPath
+          } else {
+            Write-Error "No se encontró la carpeta de build. Revisa angular.json y el nombre del proyecto."
+            exit 1
+          }
+
+          Write-Host "Carpeta de build detectada: $output"
+          echo "build_path=$output" >> $env:GITHUB_OUTPUT
+        shell: powershell
+
+      - name: Crear backup del deploy actual
+        run: |
+          $backupRoot = "${{ env.BACKUP_PATH }}"
+          $timestamp  = Get-Date -Format "yyyyMMdd-HHmmss"
+          $backupDir  = Join-Path $backupRoot $timestamp
+
+          if (Test-Path "${{ env.DEPLOY_PATH }}") {
+            New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+            Write-Host "Creando backup en: $backupDir"
+            robocopy "${{ env.DEPLOY_PATH }}" $backupDir /E /NFL /NDL /NJH /NJS /NC /NS
+            if ($LASTEXITCODE -ge 8) { exit $LASTEXITCODE } else { exit 0 }
+          } else {
+            Write-Host "Primer deploy, no hay nada que respaldar."
+            New-Item -ItemType Directory -Path "${{ env.DEPLOY_PATH }}" -Force | Out-Null
+          }
+
+          # Mantener solo los últimos 5 backups
+          if (Test-Path $backupRoot) {
+            Get-ChildItem $backupRoot -Directory |
+              Sort-Object CreationTime -Descending |
+              Select-Object -Skip 5 |
+              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          }
+        shell: powershell
+
+      - name: Deploy a IIS con robocopy
+        run: |
+          Write-Host "Desplegando ${{ steps.detect.outputs.build_path }} -> ${{ env.DEPLOY_PATH }}"
+
+          # /MIR = espejo (borra archivos viejos del destino)
+          # /R:3 /W:5 = reintentos para archivos bloqueados
+          # /XD = excluye carpetas que no queremos tocar
+          robocopy "${{ steps.detect.outputs.build_path }}" "${{ env.DEPLOY_PATH }}" /MIR /R:3 /W:5 /NFL /NDL /NJH /NJS /XD "logs" "uploads"
+
+          # Robocopy usa códigos 0-7 como éxito, 8+ como error
+          if ($LASTEXITCODE -ge 8) {
+            Write-Error "Robocopy falló con código $LASTEXITCODE"
+            exit $LASTEXITCODE
+          }
+          Write-Host "Deploy completado exitosamente"
+          exit 0
+        shell: powershell
+
+      - name: Verificar deploy
+        run: |
+          $indexPath = Join-Path "${{ env.DEPLOY_PATH }}" "index.html"
+          if (Test-Path $indexPath) {
+            Write-Host "✓ index.html existe en el destino"
+            Get-Item $indexPath | Select-Object FullName, LastWriteTime, Length
+          } else {
+            Write-Error "✗ index.html NO existe en el destino"
+            exit 1
+          }
+        shell: powershell

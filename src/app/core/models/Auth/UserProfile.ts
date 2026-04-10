@@ -4,4 +4,12 @@ export interface UserProfile {
   email: string;
   roles: string[];
   permissions: string[];
+  // Tenant
+  tenantId?: number;
+  tenantNombre?: string;
+  tenantPlan?: string;
+  tenantRol?: string;
+  modulos?: string[];
+  onboardingCompletado?: boolean;
+  tipoNegocio?: string;
 }

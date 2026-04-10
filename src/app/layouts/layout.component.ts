@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { SidebarComponent } from '../shared/sidebar.component';
 import { AppsDropdownComponent } from '../shared/apps-dropdown.component';
+import { AuthService } from '../core/services/Auth/AuthService';
+import { WizardOnboardingComponent } from '../features/onboarding/wizard.onboarding.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, SidebarComponent, AppsDropdownComponent],
+  imports: [CommonModule, RouterOutlet, RouterModule, SidebarComponent, AppsDropdownComponent, WizardOnboardingComponent],
   template: `
+    <app-wizard-onboarding *ngIf="showWizard" (closed)="showWizard=false"></app-wizard-onboarding>
+
     <div class="app-container">
       <!-- Sidebar -->
       <app-sidebar [open]="sidebarOpen" (closed)="sidebarOpen=false" />
@@ -63,9 +67,10 @@ import { AppsDropdownComponent } from '../shared/apps-dropdown.component';
     </div>
   `
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   sidebarOpen = false;
   pageTitle   = 'Dashboard';
+  showWizard  = false;
 
   private readonly titles: Record<string, string> = {
     '/dashboard':  'Dashboard',
@@ -77,12 +82,18 @@ export class MainLayoutComponent {
     '/perfil':     'Mi Perfil',
   };
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private auth: AuthService) {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
       map((e: any) => e.urlAfterRedirects)
     ).subscribe(url => {
       this.pageTitle = this.titles[url] ?? 'FacturacionMAG';
+    });
+  }
+
+  ngOnInit(): void {
+    this.auth.user$.subscribe(user => {
+      this.showWizard = !!user && !user.onboardingCompletado;
     });
   }
 }

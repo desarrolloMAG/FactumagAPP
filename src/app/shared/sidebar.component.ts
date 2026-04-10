@@ -43,7 +43,6 @@ import { WalletService } from '../core/services/wallet/WalletService';
 
       <!-- Nav -->
       <div class="sidebar-section-title">Principal</div>
-      <div class="sidebar-section-title">Principal</div>
       <nav class="sidebar-nav">
 
         <a class="nav-item"
@@ -55,109 +54,122 @@ import { WalletService } from '../core/services/wallet/WalletService';
           <span class="nav-label">Dashboard</span>
         </a>
 
-        <!-- Operación -->
-        <div class="sidebar-section-title" style="padding-top:12px">Operación</div>
+        <!-- Operación: Facturación -->
+        <ng-container *ngIf="tieneModulo('facturacion')">
+          <div class="sidebar-section-title" style="padding-top:12px">Facturación</div>
 
-        <a class="nav-item"
-          routerLink="/cfdis/new"
-          routerLinkActive="active"
-          (click)="close()"
-          style="margin-bottom:6px;border:1px dashed rgba(0,212,170,0.25)">
-          <span class="material-icons-round nav-icon" style="color:var(--accent)">add_circle_outline</span>
-          <span class="nav-label" style="color:var(--accent)">Emitir CFDI</span>
-        </a>
+          <a class="nav-item"
+            routerLink="/cfdis/new"
+            routerLinkActive="active"
+            (click)="close()"
+            style="margin-bottom:6px;border:1px dashed rgba(0,212,170,0.25)">
+            <span class="material-icons-round nav-icon" style="color:var(--accent)">add_circle_outline</span>
+            <span class="nav-label" style="color:var(--accent)">Emitir CFDI</span>
+          </a>
 
-        <a class="nav-item"
-          routerLink="/cfdis"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">receipt_long</span>
-          <span class="nav-label">CFDIs Emitidos</span>
-        </a>
+          <a class="nav-item"
+            routerLink="/cfdis"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">receipt_long</span>
+            <span class="nav-label">CFDIs Emitidos</span>
+          </a>
+        </ng-container>
 
-        <a class="nav-item"
-          routerLink="/clientes"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">people</span>
-          <span class="nav-label">Clientes</span>
-        </a>
+        <!-- Series: solo si tiene facturacion -->
+        <ng-container *ngIf="tieneModulo('series')">
+          <a class="nav-item"
+            routerLink="/series"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">format_list_numbered</span>
+            <span class="nav-label">Series y Folios</span>
+          </a>
+        </ng-container>
 
-        <a class="nav-item"
-          routerLink="/conceptos"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">inventory_2</span>
-          <span class="nav-label">Productos / Conceptos</span>
-        </a>
+        <!-- Clientes -->
+        <ng-container *ngIf="tieneModulo('clientes')">
+          <div class="sidebar-section-title" style="padding-top:12px">Clientes</div>
+          <a class="nav-item"
+            routerLink="/clientes"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">people</span>
+            <span class="nav-label">Clientes</span>
+          </a>
+        </ng-container>
 
-        <a class="nav-item"
-          routerLink="/series"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">format_list_numbered</span>
-          <span class="nav-label">Series y Folios</span>
-        </a>
+        <!-- Inventario -->
+        <ng-container *ngIf="tieneModulo('inventario')">
+          <div class="sidebar-section-title" style="padding-top:12px">Inventario</div>
+          <a class="nav-item"
+            routerLink="/conceptos"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">inventory_2</span>
+            <span class="nav-label">Productos / Conceptos</span>
+          </a>
+        </ng-container>
 
-        <!-- Empresas -->
-        <div class="sidebar-section-title" style="padding-top:12px">Empresas</div>
+        <!-- Empresas / RFCs -->
+        <ng-container *ngIf="tieneModulo('rfcs')">
+          <div class="sidebar-section-title" style="padding-top:12px">Empresas</div>
+          <a class="nav-item"
+            routerLink="/rfcs"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">business</span>
+            <span class="nav-label">Mis RFCs</span>
+          </a>
+        </ng-container>
 
-        <a class="nav-item"
-          routerLink="/rfcs"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">business</span>
-          <span class="nav-label">Mis RFCs</span>
-        </a>
+        <!-- Finanzas / Wallet -->
+        <ng-container *ngIf="tieneModulo('wallet')">
+          <div class="sidebar-section-title" style="padding-top:12px">Finanzas</div>
+          <a class="nav-item"
+            routerLink="/wallet"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">account_balance_wallet</span>
+            <span class="nav-label">Timbres y Consumo</span>
+          </a>
+        </ng-container>
 
-        <!-- Finanzas -->
-        <div class="sidebar-section-title" style="padding-top:12px">Finanzas</div>
-
-        <a class="nav-item"
-          routerLink="/wallet"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">account_balance_wallet</span>
-          <span class="nav-label">Timbres y Consumo</span>
-        </a>
+        <!-- Nómina -->
+        <ng-container *ngIf="tieneModulo('nomina')">
+          <div class="sidebar-section-title" style="padding-top:12px">Nómina</div>
+          <a class="nav-item"
+            routerLink="/empleados"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">badge</span>
+            <span class="nav-label">Empleados</span>
+          </a>
+          <a class="nav-item"
+            routerLink="/nomina/generar"
+            routerLinkActive="active"
+            (click)="close()"
+            style="margin-bottom:6px;border:1px dashed rgba(0,212,170,0.15)">
+            <span class="material-icons-round nav-icon" style="color:var(--accent)">payments</span>
+            <span class="nav-label" style="color:var(--accent)">Generar Nómina</span>
+          </a>
+          <a class="nav-item"
+            routerLink="/nomina/lotes"
+            routerLinkActive="active"
+            (click)="close()">
+            <span class="material-icons-round nav-icon">history</span>
+            <span class="nav-label">Historial de Lotes</span>
+          </a>
+        </ng-container>
 
         <!-- Cuenta -->
         <div class="sidebar-section-title" style="padding-top:12px">Cuenta</div>
-
         <a class="nav-item"
           routerLink="/perfil"
           routerLinkActive="active"
           (click)="close()">
           <span class="material-icons-round nav-icon">manage_accounts</span>
           <span class="nav-label">Mi Perfil</span>
-        </a>
-
-        <!-- Nómina -->
-        <div class="sidebar-section-title" style="padding-top:12px">Nómina</div>
-
-        <a class="nav-item"
-          routerLink="/empleados"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">badge</span>
-          <span class="nav-label">Empleados</span>
-        </a>
-
-        <a class="nav-item"
-          routerLink="/nomina/generar"
-          routerLinkActive="active"
-          (click)="close()"
-          style="margin-bottom:6px;border:1px dashed rgba(0,212,170,0.15)">
-          <span class="material-icons-round nav-icon" style="color:var(--accent)">payments</span>
-          <span class="nav-label" style="color:var(--accent)">Generar Nómina</span>
-        </a>
-
-        <a class="nav-item"
-          routerLink="/nomina/lotes"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">history</span>
-          <span class="nav-label">Historial de Lotes</span>
         </a>
 
       </nav>
@@ -200,6 +212,8 @@ export class SidebarComponent implements OnInit {
       this.totalTimbres = ws.reduce((sum, w) => sum + w.saldo, 0);
     });
   }
+
+  tieneModulo(slug: string): boolean { return this.auth.tieneModulo(slug); }
 
   close(): void { this.closed.emit(); }
   logout(): void { this.auth.logout(); }
