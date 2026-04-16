@@ -167,18 +167,7 @@ export class LoginComponent implements OnInit {
       }
 
       if (token) {
-        localStorage.setItem('accessToken', token);
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          const user = {
-            id:       payload.sub,
-            name:     payload.name,
-            email:    payload.email,
-            tenantId: payload.tenant_id ?? null,
-          };
-          localStorage.setItem('user', JSON.stringify(user));
-        } catch { }
-
+        this.auth.inicializarDesdeSso(decodeURIComponent(token));
         this.router.navigate(['/dashboard'], { replaceUrl: true });
       }
     });

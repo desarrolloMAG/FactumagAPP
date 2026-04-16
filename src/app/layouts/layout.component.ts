@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd, RouterModule } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { SidebarComponent } from '../shared/sidebar.component';
 import { AppsDropdownComponent } from '../shared/apps-dropdown.component';
 import { AuthService } from '../core/services/Auth/AuthService';
@@ -92,7 +93,12 @@ export class MainLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.auth.user$.subscribe(user => {
+    // Pide un JWT fresco al backend para detectar si el onboarding ya fue
+    // completado en otro sistema (ej. trion-beta). Si falla, usa el estado local.
+    this.auth.refreshTenantToken().pipe(
+      catchError(() => of(null)),
+      switchMap(() => this.auth.user$)
+    ).subscribe(user => {
       this.showWizard = !!user && !user.onboardingCompletado;
     });
   }

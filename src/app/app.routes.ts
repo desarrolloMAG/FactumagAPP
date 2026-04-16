@@ -40,6 +40,12 @@ export const routes: Routes = [
       { path: 'nomina/generar',       loadComponent: () => import('./features/nomina-generar/nomina.generar.component').then(m => m.NominaGenerarComponent) },
       { path: 'nomina/lotes',         loadComponent: () => import('./features/nomina-generar/nomina.lotes.component').then(m => m.NominaLotesComponent) },
       {
+        path: 'sso/callback',
+        loadComponent: () =>
+          import('./core/components/sso-callback/sso-callback.component')
+            .then(m => m.SsoCallbackComponent)
+      },
+      {
         path: 'sso/clear',
         loadComponent: () =>
           import('./core/components/sso-clear/sso-clear.component')

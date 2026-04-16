@@ -15,11 +15,9 @@ import { WalletService } from '../core/services/wallet/WalletService';
 
       <!-- Logo -->
       <div class="sidebar-logo">
-        <div class="logo-icon">F</div>
-        <div class="logo-text">
-          <div class="name">FacturacionMAG</div>
-          <div class="tagline">Portal de Facturación</div>
-        </div>
+        <a routerLink="/" class="nav-brand" aria-label="Korebix - Inicio">
+            <img src="assets/logo.png" alt="Korebix" class="logo-img" style="width: 100%;"/>
+          </a>
       </div>
 
       <!-- Usuario -->
@@ -54,11 +52,14 @@ import { WalletService } from '../core/services/wallet/WalletService';
           <span class="nav-label">Dashboard</span>
         </a>
 
-        <!-- Operación: Facturación -->
+        <!-- ══ FACTURACIÓN ════════════════════════════════════════════════ -->
+        <!-- Sección visible si el tenant tiene el módulo "facturacion" activo -->
         <ng-container *ngIf="tieneModulo('facturacion')">
           <div class="sidebar-section-title" style="padding-top:12px">Facturación</div>
 
-          <a class="nav-item"
+          <!-- Emitir CFDI: permiso emitir_cfdi -->
+          <a *ngIf="tienePermiso('emitir_cfdi')"
+            class="nav-item"
             routerLink="/cfdis/new"
             routerLinkActive="active"
             (click)="close()"
@@ -67,40 +68,65 @@ import { WalletService } from '../core/services/wallet/WalletService';
             <span class="nav-label" style="color:var(--accent)">Emitir CFDI</span>
           </a>
 
-          <a class="nav-item"
+          <!-- Ver CFDIs: permiso ver_cfdis -->
+          <a *ngIf="tienePermiso('ver_cfdis')"
+            class="nav-item"
             routerLink="/cfdis"
             routerLinkActive="active"
             (click)="close()">
             <span class="material-icons-round nav-icon">receipt_long</span>
             <span class="nav-label">CFDIs Emitidos</span>
           </a>
-        </ng-container>
 
-        <!-- Series: solo si tiene facturacion -->
-        <ng-container *ngIf="tieneModulo('series')">
-          <a class="nav-item"
+          <!-- Series y Folios: permiso ver_series -->
+          <a *ngIf="tienePermiso('ver_series')"
+            class="nav-item"
             routerLink="/series"
             routerLinkActive="active"
             (click)="close()">
             <span class="material-icons-round nav-icon">format_list_numbered</span>
             <span class="nav-label">Series y Folios</span>
           </a>
+
+          <!-- Clientes: permiso ver_clientes -->
+          <ng-container *ngIf="tienePermiso('ver_clientes')">
+            <div class="sidebar-section-title" style="padding-top:12px">Clientes</div>
+            <a class="nav-item"
+              routerLink="/clientes"
+              routerLinkActive="active"
+              (click)="close()">
+              <span class="material-icons-round nav-icon">people</span>
+              <span class="nav-label">Clientes</span>
+            </a>
+          </ng-container>
+
+          <!-- RFCs / Empresas emisoras: permiso ver_rfcs -->
+          <ng-container *ngIf="tienePermiso('ver_rfcs')">
+            <div class="sidebar-section-title" style="padding-top:12px">Empresas</div>
+            <a class="nav-item"
+              routerLink="/rfcs"
+              routerLinkActive="active"
+              (click)="close()">
+              <span class="material-icons-round nav-icon">business</span>
+              <span class="nav-label">Mis RFCs</span>
+            </a>
+          </ng-container>
+
+          <!-- Wallet / Timbres: permiso ver_wallet -->
+          <ng-container *ngIf="tienePermiso('ver_wallet')">
+            <div class="sidebar-section-title" style="padding-top:12px">Finanzas</div>
+            <a class="nav-item"
+              routerLink="/wallet"
+              routerLinkActive="active"
+              (click)="close()">
+              <span class="material-icons-round nav-icon">account_balance_wallet</span>
+              <span class="nav-label">Timbres y Consumo</span>
+            </a>
+          </ng-container>
         </ng-container>
 
-        <!-- Clientes -->
-        <ng-container *ngIf="tieneModulo('clientes')">
-          <div class="sidebar-section-title" style="padding-top:12px">Clientes</div>
-          <a class="nav-item"
-            routerLink="/clientes"
-            routerLinkActive="active"
-            (click)="close()">
-            <span class="material-icons-round nav-icon">people</span>
-            <span class="nav-label">Clientes</span>
-          </a>
-        </ng-container>
-
-        <!-- Inventario -->
-        <ng-container *ngIf="tieneModulo('inventario')">
+        <!-- ══ INVENTARIO ══════════════════════════════════════════════════ -->
+        <ng-container *ngIf="tienePermiso('ver_productos')">
           <div class="sidebar-section-title" style="padding-top:12px">Inventario</div>
           <a class="nav-item"
             routerLink="/conceptos"
@@ -111,32 +137,9 @@ import { WalletService } from '../core/services/wallet/WalletService';
           </a>
         </ng-container>
 
-        <!-- Empresas / RFCs -->
-        <ng-container *ngIf="tieneModulo('rfcs')">
-          <div class="sidebar-section-title" style="padding-top:12px">Empresas</div>
-          <a class="nav-item"
-            routerLink="/rfcs"
-            routerLinkActive="active"
-            (click)="close()">
-            <span class="material-icons-round nav-icon">business</span>
-            <span class="nav-label">Mis RFCs</span>
-          </a>
-        </ng-container>
-
-        <!-- Finanzas / Wallet -->
-        <ng-container *ngIf="tieneModulo('wallet')">
-          <div class="sidebar-section-title" style="padding-top:12px">Finanzas</div>
-          <a class="nav-item"
-            routerLink="/wallet"
-            routerLinkActive="active"
-            (click)="close()">
-            <span class="material-icons-round nav-icon">account_balance_wallet</span>
-            <span class="nav-label">Timbres y Consumo</span>
-          </a>
-        </ng-container>
-
-        <!-- Nómina -->
-        <ng-container *ngIf="tieneModulo('nomina')">
+        <!-- ══ NÓMINA ══════════════════════════════════════════════════════ -->
+        <!-- Nómina es un módulo de app-level, no un permiso granular -->
+        <ng-container *ngIf="tienePermiso('ver_empleados')">
           <div class="sidebar-section-title" style="padding-top:12px">Nómina</div>
           <a class="nav-item"
             routerLink="/empleados"
@@ -213,8 +216,9 @@ export class SidebarComponent implements OnInit {
     });
   }
 
-  tieneModulo(slug: string): boolean { return this.auth.tieneModulo(slug); }
+  tieneModulo(slug: string): boolean   { return this.auth.tieneModulo(slug); }
+  tienePermiso(clave: string): boolean { return this.auth.tienePermiso(clave); }
 
-  close(): void { this.closed.emit(); }
+  close(): void  { this.closed.emit(); }
   logout(): void { this.auth.logout(); }
 }

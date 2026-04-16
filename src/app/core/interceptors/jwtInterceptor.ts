@@ -61,16 +61,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   if (token) {
-    localStorage.setItem('accessToken', token);
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      localStorage.setItem('user', JSON.stringify({
-        id:       payload.sub,
-        name:     payload.name,
-        email:    payload.email,
-        tenantId: payload.tenant_id ?? null,
-      }));
-    } catch { }
+    auth.inicializarDesdeSso(token);
     return true;
   }
 
