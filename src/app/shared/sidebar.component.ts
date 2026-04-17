@@ -165,15 +165,6 @@ import { WalletService } from '../core/services/wallet/WalletService';
           </a>
         </ng-container>
 
-        <!-- Cuenta -->
-        <div class="sidebar-section-title" style="padding-top:12px">Cuenta</div>
-        <a class="nav-item"
-          routerLink="/perfil"
-          routerLinkActive="active"
-          (click)="close()">
-          <span class="material-icons-round nav-icon">manage_accounts</span>
-          <span class="nav-label">Mi Perfil</span>
-        </a>
 
       </nav>
 

@@ -6,9 +6,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Round');
 
-/* ── Variables ────────────────────────────────────────────────────────────── */
+/* ── Variables (LIGHT — default) ─────────────────────────────────────────── */
 :root {
-  /* Sidebar (oscuro — mantiene contraste con contenido claro) */
+  /* Sidebar (oscuro siempre — contraste con contenido) */
   --sidebar-bg:        #0F172A;
   --sidebar-bg2:       #1E293B;
   --sidebar-border:    rgba(255,255,255,0.06);
@@ -18,23 +18,48 @@
   --sidebar-active:    #5B7FE6;
   --sidebar-width:     260px;
 
-  /* Contenido (claro) — Design System tokens */
+  /* Contenido (claro) */
   --bg-main:     #F8FAFC;
   --bg-card:     #FFFFFF;
   --bg-card2:    #F8FAFC;
+  --surface:     #FFFFFF;
   --border:      #E2E8F0;
   --border-light:#F1F5F9;
 
   /* Textos */
+  --text:          #0F172A;
   --text-primary:  #0F172A;
   --text-secondary:#475569;
   --text-muted:    #94A3B8;
 
-  /* Acento principal — HOMOLOGADO con Laravel */
+  /* Acento principal */
   --accent:        #3B63D9;
   --accent-dark:   #2A4FBF;
   --accent-light:  rgba(59, 99, 217, 0.08);
   --accent-glow:   0 4px 12px rgba(59, 99, 217, 0.15);
+
+  /* Aliases --mag-* para homologar con PrincipalLogin */
+  --mag-bg:          #F8FAFC;
+  --mag-surface:     #FFFFFF;
+  --mag-border:      #E2E8F0;
+  --mag-border-lt:   #F1F5F9;
+  --mag-primary:     #3B63D9;
+  --mag-primary-h:   #2A4FBF;
+  --mag-primary-50:  rgba(59,99,217,0.08);
+  --mag-primary-100: rgba(59,99,217,0.14);
+  --mag-text:        #0F172A;
+  --mag-text-sec:    #475569;
+  --mag-text-hint:   #94A3B8;
+  --mag-success:     #059669;
+  --mag-success-50:  #ECFDF5;
+  --mag-danger:      #DC2626;
+  --mag-danger-50:   #FEF2F2;
+  --mag-warning:     #D97706;
+  --mag-warning-50:  #FFFBEB;
+  --mag-input-bg:    #FFFFFF;
+  --mag-overlay:     rgba(15,23,42,0.45);
+  --mag-shadow:      0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --mag-shadow-lg:   0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
 
   /* Colores semánticos */
   --success:  #059669;
@@ -72,6 +97,52 @@
   --grad-card:    #FFFFFF;
 }
 
+/* ── DARK MODE ────────────────────────────────────────────────────────────── */
+body.mag-dark {
+  --bg-main:     #07080c;
+  --bg-card:     #0e1016;
+  --bg-card2:    #131519;
+  --surface:     #0e1016;
+  --border:      rgba(255,255,255,0.07);
+  --border-light:rgba(255,255,255,0.04);
+  --text:          #eceef5;
+  --text-primary:  #eceef5;
+  --text-secondary:rgba(236,238,245,0.6);
+  --text-muted:    rgba(236,238,245,0.35);
+  --accent:        #5B7FE6;
+  --accent-dark:   #7B9BF0;
+  --accent-light:  rgba(91,127,230,0.1);
+  --success:       #34d399;
+  --success-light: rgba(16,185,129,0.1);
+  --danger:        #f87171;
+  --danger-light:  rgba(248,113,113,0.1);
+  --warning:       #fbbf24;
+  --warning-light: rgba(251,191,36,0.1);
+
+  /* Aliases --mag-* dark */
+  --mag-bg:          #07080c;
+  --mag-surface:     #0e1016;
+  --mag-border:      rgba(255,255,255,0.07);
+  --mag-border-lt:   rgba(255,255,255,0.04);
+  --mag-primary:     #5B7FE6;
+  --mag-primary-h:   #7B9BF0;
+  --mag-primary-50:  rgba(91,127,230,0.1);
+  --mag-primary-100: rgba(91,127,230,0.15);
+  --mag-text:        #eceef5;
+  --mag-text-sec:    rgba(236,238,245,0.55);
+  --mag-text-hint:   rgba(236,238,245,0.35);
+  --mag-success:     #34d399;
+  --mag-success-50:  rgba(16,185,129,0.1);
+  --mag-danger:      #f87171;
+  --mag-danger-50:   rgba(248,113,113,0.1);
+  --mag-warning:     #fbbf24;
+  --mag-warning-50:  rgba(251,191,36,0.1);
+  --mag-input-bg:    rgba(255,255,255,0.04);
+  --mag-overlay:     rgba(0,0,0,0.7);
+  --mag-shadow:      0 4px 12px rgba(0,0,0,0.35);
+  --mag-shadow-lg:   0 24px 80px rgba(0,0,0,0.5);
+}
+
 /* ── Reset & Base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -87,6 +158,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
 }
 
 h1, h2, h3, h4, h5, h6 {

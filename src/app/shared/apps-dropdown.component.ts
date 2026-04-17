@@ -1,5 +1,6 @@
 import { Component, HostListener, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../core/services/Auth/AuthService';
 
 interface SsoApp { name: string; url: string; icon: string; color: string; }
 
@@ -43,7 +44,9 @@ interface SsoApp { name: string; url: string; icon: string; color: string; }
       display: flex; align-items: center; justify-content: center;
       transition: background 0.15s;
     }
-    .dots-btn:hover, .dots-btn.active { background: rgba(0,212,170,0.12); }
+    .dots-btn:hover, .dots-btn.active {
+      background: var(--mag-primary-50, rgba(79,110,247,0.12));
+    }
 
     .dots-grid {
       display: grid;
@@ -53,16 +56,23 @@ interface SsoApp { name: string; url: string; icon: string; color: string; }
     }
     .dots-grid span {
       width: 5px; height: 5px; border-radius: 50%;
-      background: var(--text-secondary, #94a3b8); transition: background 0.15s;
+      background: var(--mag-text-sec, #64748b);
+      transition: background 0.15s;
     }
     .dots-btn:hover .dots-grid span,
-    .dots-btn.active .dots-grid span { background: var(--accent, #00d4aa); }
+    .dots-btn.active .dots-grid span {
+      background: var(--mag-primary, #4f6ef7);
+    }
 
     .appdrop-panel {
-      position: absolute; top: calc(100% + 10px); right: 0;
-      width: 280px; background: var(--surface, #1e293b);
-      border: 1px solid var(--border-light, rgba(255,255,255,0.08));
-      border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 280px;
+      background: var(--mag-surface, #ffffff);
+      border: 1px solid var(--mag-border-lt, #e2e8f0);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.16);
       z-index: 9999; overflow: hidden;
       animation: fadeDown 0.15s ease;
     }
@@ -73,9 +83,10 @@ interface SsoApp { name: string; url: string; icon: string; color: string; }
 
     .appdrop-header {
       padding: 14px 20px 10px;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
-      color: var(--text-secondary, #94a3b8);
-      border-bottom: 1px solid var(--border-light, rgba(255,255,255,0.08));
+      font-size: 13px; font-weight: 600;
+      color: var(--mag-text-sec, #64748b);
+      border-bottom: 1px solid var(--mag-border-lt, #e2e8f0);
+      letter-spacing: 0.3px;
     }
 
     .appdrop-grid {
@@ -87,9 +98,9 @@ interface SsoApp { name: string; url: string; icon: string; color: string; }
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       padding: 12px 8px; border-radius: 10px;
       border: none; background: transparent; cursor: pointer;
-      transition: background 0.15s; font-family: inherit; color: var(--text, #e2e8f0);
+      transition: background 0.15s; font-family: inherit; color: var(--mag-text, #0F172A);
     }
-    .appdrop-item:hover { background: rgba(0,212,170,0.08); }
+    .appdrop-item:hover { background: var(--mag-primary-50, rgba(79,110,247,0.08)); }
 
     .appdrop-icon {
       width: 48px; height: 48px; border-radius: 12px;
@@ -102,12 +113,14 @@ interface SsoApp { name: string; url: string; icon: string; color: string; }
 
     .appdrop-name {
       font-size: 11px; font-weight: 500;
-      color: var(--text-secondary, #94a3b8);
-      text-align: center; line-height: 1.3; max-width: 72px;
+      color: var(--mag-text-sec, #64748b);
+      text-align: center; line-height: 1.3;
+      max-width: 72px; word-break: break-word;
     }
   `]
 })
 export class AppsDropdownComponent {
+  private auth  = inject(AuthService);
   private elRef = inject(ElementRef);
   open = false;
 
@@ -122,7 +135,7 @@ export class AppsDropdownComponent {
 
   goToApp(app: SsoApp): void {
     this.open = false;
-    const token = localStorage.getItem('accessToken');
+    const token = this.auth.getToken();
     if (!token) { window.location.href = app.url; return; }
     const sep = app.url.includes('?') ? '&' : '?';
     window.location.href = `${app.url}${sep}token=${encodeURIComponent(token)}`;
